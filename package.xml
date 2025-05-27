@@ -1,0 +1,28 @@
+<?xml version="1.0"?>
+<package format="2">
+  <name>flir_icp_calib</name>
+  <version>0.0.0</version>
+  <description> ROS Package for Camera-Robot calibration using ICP
+  </description>
+
+  <maintainer email="henrik.trommer@uni-goettingen.de">docker</maintainer>
+
+  <license>Apachev2</license>
+
+  <author email="henrik.trommer@uni-goettingen.de">Henrik Trommer</author>
+
+  <buildtool_depend>catkin</buildtool_depend>
+  <depend>roscpp</depend>
+  <depend>rospy</depend>
+  <depend>std_msgs</depend>
+  <depend>geometry_msgs</depend>
+  <depend>keiko_msgs</depend>
+  <depend>ros_node_interface</depend>
+  <depend>tf2_ros</depend>
+
+  <export>
+  <!-- Other tools can request additional information be placed here -->
+  </export>
+</package>
+
+

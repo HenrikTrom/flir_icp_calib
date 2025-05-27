@@ -1,0 +1,35 @@
+{
+    "$schema": "http://json-schema.org/draft-07/schema#",
+    "type": "object",
+    "properties": {
+        "online": { "type": "boolean" },
+        "log": { "type": "boolean" },
+        "load_path_offline": { "type": "string" },
+        "camera_settings_file": { "type": "string" },
+        "aruco_dictionary": { "type": "integer" },
+        "h": { "type": "integer" },
+        "w": { "type": "integer" },
+        "min_markers": { "type": "integer" },
+        "calibration_file": { "type": "string" },
+        "min_cameras_per_point": { "type": "integer" },
+        "local_pattern_file": { "type": "string" },
+        "max_reprojection_error_images": { "type": "number" },
+        "max_reprojection_error_robot": { "type": "number" },
+        "parent_frame_id": { "type": "string" },
+        "child_frame_id": { "type": "string" }
+    },
+    "required": [
+        "online", "log",
+        "load_path_offline", 
+        "camera_settings_file",
+        "aruco_dictionary", "h", "w",
+        "min_markers",
+        "calibration_file", 
+        "min_cameras_per_point", 
+        "local_pattern_file", 
+        "max_reprojection_error_images",
+        "max_reprojection_error_robot",
+        "parent_frame_id", "child_frame_id"
+    ]
+  }
+  
