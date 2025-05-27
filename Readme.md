@@ -151,6 +151,6 @@ The final homogeneous transform matrix consists of a rotation matrix and a trans
 ![Rep](content/rep_tile.jpg)
 
 
-## 👥 Acknowledgments
+## Acknowledgments
 
-* Special thanks to **Cheng Minghao**, whose triangulation and camera calibration work during his PhD served as a foundation for this package.
+* Special thanks to **Cheng Minghao**, whose code for triangulation and camera calibration was modified for this package.
