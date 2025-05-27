@@ -1,0 +1,26 @@
+cff-version: 1.2.0
+message: "If you use this software, please cite it as below."
+title: "flir_icp_calib"
+version: 1.0.0
+doi: 10.5281/zenodo.15527774  
+date-released: 2025-05-27
+license: CC0-1.0 
+url: https://github.com/HenrikTrom/flir_icp_calib
+repository-code: https://github.com/HenrikTrom/flir_icp_calib
+abstract: "ROS/ROS2 package to compute a homogeneous transformation from a multi-camera reference frame to a robot base frame, using an optical calibration target."
+authors:
+  - family-names: Trommer
+    given-names: Henrik
+    orcid: https://orcid.org/0009-0002-3110-0963
+    affiliation: University of Göttingen
+keywords:
+  - ros
+  - ros2
+  - calibration
+  - triangulation
+  - multi-view
+  - icp
+  - iterative-closest-points
+  - c++
+  - research software
+  - open source
