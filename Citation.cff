@@ -2,7 +2,7 @@ cff-version: 1.2.0
 message: "If you use this software, please cite it as below."
 title: "flir_icp_calib"
 version: 1.0.0
-doi: 10.5281/zenodo.15527774  
+doi: 10.5281/zenodo.15528299   
 date-released: 2025-05-27
 license: CC0-1.0 
 url: https://github.com/HenrikTrom/flir_icp_calib
