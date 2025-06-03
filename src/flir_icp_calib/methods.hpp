@@ -19,8 +19,8 @@ namespace flir_icp_calib{
  * \return true if n_markers_detected exceeds min markers defined by cfg
  */
 bool scan_pattern(
-    std::array<cv::Mat, GLOBAL_CONST_NCAMS>& frame, config_transform& cfg_transform, std::vector<int>& ids, 
-    std::array<std::vector<std::vector<cv::Point2f>>, GLOBAL_CONST_NCAMS>& detected_markers
+    std::array<cv::Mat, flirmulticamera::GLOBAL_CONST_NCAMS>& frame, config_transform& cfg_transform, std::vector<int>& ids, 
+    std::array<std::vector<std::vector<cv::Point2f>>, flirmulticamera::GLOBAL_CONST_NCAMS>& detected_markers
 );
 
 /**
@@ -34,8 +34,8 @@ bool scan_pattern(
  */
 std::vector<float> mean_reprojection_errors(
     MultiCameras& cameras, std::vector<Eigen::VectorXf>& points_3d, 
-    std::vector<std::array<cv::Point2f, GLOBAL_CONST_NCAMS>>& detected_markers,
-    std::vector<std::array<uint8_t, GLOBAL_CONST_NCAMS>>& CamIDs
+    std::vector<std::array<cv::Point2f, flirmulticamera::GLOBAL_CONST_NCAMS>>& detected_markers,
+    std::vector<std::array<uint8_t, flirmulticamera::GLOBAL_CONST_NCAMS>>& CamIDs
 );
 
 /**
@@ -48,8 +48,8 @@ std::vector<float> mean_reprojection_errors(
  * \return Void
  */
 void Calc3DCentre(
-    std::array<cv::Point2f, GLOBAL_CONST_NCAMS> Points, 
-    std::array<uint8_t, GLOBAL_CONST_NCAMS> CamIDs, MultiCameras Cameras, 
+    std::array<cv::Point2f, flirmulticamera::GLOBAL_CONST_NCAMS> Points, 
+    std::array<uint8_t, flirmulticamera::GLOBAL_CONST_NCAMS> CamIDs, MultiCameras Cameras, 
     Eigen::VectorXf& Centre3D
 );
 
@@ -62,8 +62,8 @@ void Calc3DCentre(
  * \return Triangulated homogeneous points with shape Nx4  
  */
 std::vector<Eigen::VectorXf> Calc3DCentres(
-    std::vector<std::array<cv::Point2f, GLOBAL_CONST_NCAMS>> Points, 
-    std::vector<std::array<uint8_t, GLOBAL_CONST_NCAMS>> CamIDs, 
+    std::vector<std::array<cv::Point2f, flirmulticamera::GLOBAL_CONST_NCAMS>> Points, 
+    std::vector<std::array<uint8_t, flirmulticamera::GLOBAL_CONST_NCAMS>> CamIDs, 
     MultiCameras Cameras
 );
 
@@ -79,8 +79,8 @@ std::vector<Eigen::VectorXf> Calc3DCentres(
  */
 bool triangulate_multi_cams(
     MultiCameras& cameras, float max_reprojection_error, 
-    std::vector<std::array<cv::Point2f, GLOBAL_CONST_NCAMS>>& detected_markers, 
-    std::vector<std::array<uint8_t, GLOBAL_CONST_NCAMS>>& CamIDs, 
+    std::vector<std::array<cv::Point2f, flirmulticamera::GLOBAL_CONST_NCAMS>>& detected_markers, 
+    std::vector<std::array<uint8_t, flirmulticamera::GLOBAL_CONST_NCAMS>>& CamIDs, 
     std::vector<Eigen::VectorXf>& points_3d
 );
 
@@ -115,10 +115,10 @@ bool validate_reprojection_after_icp(
     Eigen::MatrixXf &transform, 
     std::vector<Eigen::VectorXf> &local_points_intersection, 
     MultiCameras &cameras,
-    std::array<cv::Mat, GLOBAL_CONST_NCAMS> &frame, 
+    std::array<cv::Mat, flirmulticamera::GLOBAL_CONST_NCAMS> &frame, 
     std::string &save_dir,
-    std::vector<std::array<cv::Point2f, GLOBAL_CONST_NCAMS>> &detected_points,
-    std::vector<std::array<uint8_t, GLOBAL_CONST_NCAMS>> &CamIDs,
+    std::vector<std::array<cv::Point2f, flirmulticamera::GLOBAL_CONST_NCAMS>> &detected_points,
+    std::vector<std::array<uint8_t, flirmulticamera::GLOBAL_CONST_NCAMS>> &CamIDs,
     float &max_reprojection_error_robot, bool &log
 );
 

@@ -5,8 +5,8 @@ set(CMAKE_CXX_STANDARD 17)
 
 option(DEBUG_TIME_LOGGING "Enable cout for logging runtime" ON)
 
-set(CMAKE_BUILD_TYPE Release)
-# set(CMAKE_BUILD_TYPE Debug)
+# set(CMAKE_BUILD_TYPE Release)
+set(CMAKE_BUILD_TYPE Debug)
 if(CMAKE_BUILD_TYPE STREQUAL "Debug")
   set(DEBUG_TIME_LOGGING ON CACHE BOOL "Enable cout for logging runtime" FORCE)
 else()
@@ -19,9 +19,6 @@ endif()
 
 message(STATUS "DEBUG_TIME_LOGGING is ${DEBUG_TIME_LOGGING}")
 
-include(cmake/ccache.cmake)
-set(CONFIG_DIR ${CMAKE_CURRENT_SOURCE_DIR}/cfg)
-
 set(BATCH_SIZE 5 CACHE STRING "Fixed batch size for inference")
 if(DEFINED ENV{BATCH_SIZE})
     set(BATCH_SIZE $ENV{BATCH_SIZE})
@@ -31,35 +28,11 @@ else()
 endif()
 
 set(CONFIG_DIR ${CMAKE_CURRENT_SOURCE_DIR}/cfg)
-set(MASTER_LINE $ENV{FLIR_MASTER_LINE})
-set(SLAVE_LINE $ENV{FLIR_SLAVE_LINE})
-set(FLIR_CAMERA_SERIAL_NUMBERS $ENV{FLIR_CAMERA_SERIAL_NUMBERS})
-set(FLIR_CAMERA_COUNT $ENV{FLIR_CAMERA_COUNT})
-set(FLIR_MASTER_CAM_SERIAL $ENV{FLIR_MASTER_CAM_SERIAL})
 set(FLIR_TOP_CAM_SERIAL $ENV{FLIR_TOP_CAM_SERIAL})
-set(MAX_REPROJECTION_ERROR 2.f)
-set(MIN_DETECTED_CAMS 3)
-string(REPLACE "," ";" SERIAL_NUMBERS ${FLIR_CAMERA_SERIAL_NUMBERS})
-
-set(GENERATED_HEADER "${CMAKE_CURRENT_SOURCE_DIR}/src/${PROJECT_NAME}/hardware_constants.h")
-file(WRITE ${GENERATED_HEADER} "// This file is auto-generated. Do not edit.\n")
-file(APPEND ${GENERATED_HEADER} "#pragma once\n\n")
-file(APPEND ${GENERATED_HEADER} "#include <array>\n#include <string_view>\n\n")
-file(APPEND ${GENERATED_HEADER} "namespace ${PROJECT_NAME} {\n\n")
-file(APPEND ${GENERATED_HEADER} "constexpr std::string_view CONFIG_DIR = \"${CONFIG_DIR}\";\n")
-file(APPEND ${GENERATED_HEADER} "constexpr std::size_t GLOBAL_CONST_NCAMS = ${FLIR_CAMERA_COUNT};\n")
-file(
-  APPEND 
-  ${GENERATED_HEADER} 
-  "constexpr std::array<std::string_view, ${FLIR_CAMERA_COUNT}> GLOBAL_CONST_CAMERA_SERIAL_NUMBERS = {\n")
-
-foreach(val IN LISTS SERIAL_NUMBERS)
-    file(APPEND ${GENERATED_HEADER} "    \"${val}\",\n")
-endforeach()
-
-file(APPEND ${GENERATED_HEADER} "};\n")
-file(APPEND ${GENERATED_HEADER} "constexpr std::string_view GLOBAL_CONST_TOP_CAM_SERIAL = \"${FLIR_TOP_CAM_SERIAL}\";\n")
-file(APPEND ${GENERATED_HEADER} "}\n")
+configure_file(
+  ${CMAKE_CURRENT_SOURCE_DIR}/cmake/config.h.in
+  ${CMAKE_CURRENT_SOURCE_DIR}/src/${PROJECT_NAME}/config.h
+)
 ##################################################################################
 # END: const header cam serial numbers
 ##################################################################################

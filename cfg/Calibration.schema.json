@@ -3,8 +3,6 @@
     "type": "object",
     "properties": {
       "timestamp": {"type": "string"},
-      "FLIRMasterCamSerial": { "type": "string" },
-      "FLIRTopCamID": { "type": "integer" },
       "CAMERAS": {
         "type": "array",
         "items": {
@@ -35,6 +33,6 @@
         }
       }
     },
-    "required": ["FLIRMasterCamSerial", "FLIRTopCamID", "CAMERAS"]
+    "required": ["CAMERAS"]
   }
   

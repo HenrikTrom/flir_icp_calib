@@ -19,7 +19,7 @@ TransformInterfaceAruco::TransformInterfaceAruco(ros::NodeHandle &nh, const std:
 
 };
 bool TransformInterfaceAruco::get_images(
-    std::array<cv::Mat, GLOBAL_CONST_NCAMS> &frame
+    std::array<cv::Mat, flirmulticamera::GLOBAL_CONST_NCAMS> &frame
 ){
     flirmulticamera::CameraSettings settings;
     spdlog::info("Loading camera settings from: {}", this->cfg.camera_settings_file);
@@ -36,7 +36,7 @@ bool TransformInterfaceAruco::get_images(
     std::this_thread::sleep_for(std::chrono::milliseconds(1));
     size_t failed_iterations = 0;
     constexpr size_t max_faild_iterations = 100;
-    std::array<flirmulticamera::Frame, GLOBAL_CONST_NCAMS> imgs;
+    std::array<flirmulticamera::Frame, flirmulticamera::GLOBAL_CONST_NCAMS> imgs;
     while(true)
     {
         if (fcamhandler.Get(imgs))
@@ -89,15 +89,15 @@ bool TransformInterfaceAruco::start()
 {
     std::string frame_dir = std::string(CONFIG_DIR)+"/../test/data";
     // get and save images
-    std::array<cv::Mat, GLOBAL_CONST_NCAMS> frame;
+    std::array<cv::Mat, flirmulticamera::GLOBAL_CONST_NCAMS> frame;
     if (this->cfg.online){
         this->get_images(frame);
     }
     else{
-        std::array<std::string, GLOBAL_CONST_NCAMS> fnames = cpp_utils::get_filenames<GLOBAL_CONST_NCAMS>(
+        std::array<std::string, flirmulticamera::GLOBAL_CONST_NCAMS> fnames = cpp_utils::get_filenames<flirmulticamera::GLOBAL_CONST_NCAMS>(
             this->cfg.load_path_offline, ".jpg"
         );
-        for (uint8_t i =0; i<GLOBAL_CONST_NCAMS; i++){
+        for (uint8_t i =0; i<flirmulticamera::GLOBAL_CONST_NCAMS; i++){
             std::string inputImage =  this->cfg.load_path_offline+fnames.at(i)+".jpg";
             frame.at(i) = cv::imread(inputImage);
             if (frame.at(i).empty()){
@@ -108,7 +108,7 @@ bool TransformInterfaceAruco::start()
         }
     }
     std::vector<int> ids_detected, ids_pattern; 
-    std::array<std::vector<std::vector<cv::Point2f>>, GLOBAL_CONST_NCAMS> detected_markers;
+    std::array<std::vector<std::vector<cv::Point2f>>, flirmulticamera::GLOBAL_CONST_NCAMS> detected_markers;
     // image, marker, corner
     scan_pattern(frame, this->cfg, ids_detected, detected_markers);
     if ((int) ids_detected.size() < this->cfg.min_markers){
@@ -147,8 +147,8 @@ bool TransformInterfaceAruco::start()
 
     // intersect pattern & detected
     // fill camids, fill detected markers
-    std::vector<std::array<cv::Point2f, GLOBAL_CONST_NCAMS>> detected_points;
-    std::vector<std::array<uint8_t, GLOBAL_CONST_NCAMS>> CamIDs;
+    std::vector<std::array<cv::Point2f, flirmulticamera::GLOBAL_CONST_NCAMS>> detected_points;
+    std::vector<std::array<uint8_t, flirmulticamera::GLOBAL_CONST_NCAMS>> CamIDs;
     std::vector<int> ids_intersection;
     std::vector<Eigen::VectorXf> local_points_intersection;
     for (int pidx=0; pidx<ids_pattern.size(); pidx++){ // point in local pattern
@@ -160,14 +160,14 @@ bool TransformInterfaceAruco::start()
                     Eigen::VectorXf _local_point(3);
                     _local_point = local_points.at(pidx*4+cid);
                     local_points_intersection.push_back(_local_point);
-                    std::array<cv::Point2f, GLOBAL_CONST_NCAMS> img_points; 
+                    std::array<cv::Point2f, flirmulticamera::GLOBAL_CONST_NCAMS> img_points; 
                     for (int img_id=0; img_id<frame.size(); img_id++){
                         img_points.at(img_id) = detected_markers.at(img_id).at(midx).at(cid);
                     }
                     detected_points.push_back(img_points);
                     // Points have been detected by all cameras (scan pattern)
-                    std::array<uint8_t, GLOBAL_CONST_NCAMS> cids;
-                    for (uint8_t i = 0; i < static_cast<uint8_t>(GLOBAL_CONST_NCAMS); i++)
+                    std::array<uint8_t, flirmulticamera::GLOBAL_CONST_NCAMS> cids;
+                    for (uint8_t i = 0; i < static_cast<uint8_t>(flirmulticamera::GLOBAL_CONST_NCAMS); i++)
                     {
                         cids.at(i) = i;
                     }
@@ -221,16 +221,28 @@ bool TransformInterfaceAruco::start()
         this->det_arucomarkers3d, this->det_rviz
     );
 
+     this->ThreadHandle.reset(new std::thread(&TransformInterfaceAruco::ThreadFunction, this));
+
     return true;
 };
 
-bool TransformInterfaceAruco::loop_step()
+void TransformInterfaceAruco::ThreadFunction()
 {
-    this->pub_det_aruco.publish(this->det_arucomarkers3d);
-    this->pub_det_rviz.publish(this->det_rviz);
-    ros::Duration(this->pub_delay).sleep();
-    return true;
+    uint16_t count = 0;
+    while (!this->ShouldClose && ros::ok()){
+        count ++;
+        if (count == 100){
+            this->pub_det_aruco.publish(this->det_arucomarkers3d);
+            this->pub_det_rviz.publish(this->det_rviz);
+            count == 0;
+        }
+        std::this_thread::sleep_for(std::chrono::milliseconds(10));
+    }
 };
 
+void TransformInterfaceAruco::Terminate(){
+    this->ShouldClose = true;
+    this->ThreadHandle->join();
+}
 
 }

@@ -143,7 +143,7 @@ void publish_transforms(
 )
 {
     // set multi-camera-transforms
-    for (std::size_t cam_id = 1; cam_id <GLOBAL_CONST_NCAMS; cam_id++){
+    for (std::size_t cam_id = 1; cam_id <flirmulticamera::GLOBAL_CONST_NCAMS; cam_id++){
         auto msg = matrix2msg(cameras.Cam.at(cam_id).M, parent_frame_id, "cam"+std::to_string(cam_id), true);
         broadcaster.sendTransform(msg);
     }

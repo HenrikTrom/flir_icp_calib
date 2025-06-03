@@ -4,8 +4,9 @@
 #include <vector>
 #include <Eigen/Dense>
 #include <iostream>
-#include "hardware_constants.h"
+#include "config.h"
 #include "cpp_utils/jsontools.h"
+#include "flirmulticamera/hardware_constants.h"
 #include <cstdio>
 #include <unistd.h>
 #include <spdlog/spdlog.h>
@@ -57,11 +58,11 @@ public:
     MultiCameras();
     ~MultiCameras();
 
-    std::array<CameraParameters, GLOBAL_CONST_NCAMS> Cam;
-    std::array<std::array<Eigen::MatrixXf, GLOBAL_CONST_NCAMS>, GLOBAL_CONST_NCAMS> F;
+    std::array<CameraParameters, flirmulticamera::GLOBAL_CONST_NCAMS> Cam;
+    std::array<std::array<Eigen::MatrixXf, flirmulticamera::GLOBAL_CONST_NCAMS>, flirmulticamera::GLOBAL_CONST_NCAMS> F;
 
     uint8_t TopCamID;
-    std::array<std::string, GLOBAL_CONST_NCAMS> CameraSNs;
+    std::array<std::string, flirmulticamera::GLOBAL_CONST_NCAMS> CameraSNs;
 
     void Init(void);
 private:

@@ -33,13 +33,14 @@ public:
      * Computes and publishes the transform, given the config
      */
     bool start();
-    void Terminate(){};
+    void Terminate();
     /**
      * Placeholder to keep main-thread busy.
      */
-    bool loop_step();
+    void ThreadFunction(void);
+    std::unique_ptr<std::thread> ThreadHandle;
 
-    bool get_images(std::array<cv::Mat, GLOBAL_CONST_NCAMS> &frame);
+    bool get_images(std::array<cv::Mat, flirmulticamera::GLOBAL_CONST_NCAMS> &frame);
 
 private:
     double pub_delay = 0.0001;

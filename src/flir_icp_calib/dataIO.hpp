@@ -16,7 +16,7 @@
 #include "opencv2/core.hpp"
 #include <opencv2/imgcodecs.hpp>
 #include <opencv2/aruco.hpp>
-#include "hardware_constants.h"
+#include "config.h"
 
 #include "methods.hpp"
 #include "visualization.hpp"

@@ -50,9 +50,9 @@ CameraParameters::~CameraParameters()
 
 MultiCameras::MultiCameras()
 {
-    for (uint16_t i = 0; i < GLOBAL_CONST_NCAMS; i++)
+    for (uint16_t i = 0; i < flirmulticamera::GLOBAL_CONST_NCAMS; i++)
     {
-        for (uint16_t j = 0; j < GLOBAL_CONST_NCAMS; j++)
+        for (uint16_t j = 0; j < flirmulticamera::GLOBAL_CONST_NCAMS; j++)
         {
             this->F[i][j] = MatrixXf{3, 3};
         }
@@ -66,9 +66,9 @@ MultiCameras::~MultiCameras()
 void MultiCameras::Init(void)
 {
     // calculate Fundamental matrices
-    for (uint16_t i = 0; i < GLOBAL_CONST_NCAMS; i++)
+    for (uint16_t i = 0; i < flirmulticamera::GLOBAL_CONST_NCAMS; i++)
     {
-        for (uint16_t j = 0; j < GLOBAL_CONST_NCAMS; j++)
+        for (uint16_t j = 0; j < flirmulticamera::GLOBAL_CONST_NCAMS; j++)
         {
             if (i != j)
             {
@@ -116,36 +116,36 @@ bool LoadCameras(
         return false;
     }
     auto cams = calib_doc["CAMERAS"].GetArray();
-    std::array<std::string, GLOBAL_CONST_NCAMS> SNs;
+    std::array<std::string, flirmulticamera::GLOBAL_CONST_NCAMS> SNs;
 
-    if (cams.Size() != GLOBAL_CONST_NCAMS)
+    if (cams.Size() != flirmulticamera::GLOBAL_CONST_NCAMS)
     {
         std::string error_msg = "Number of cameras in calibration file ({}) != expected number of cameras ({})";
-        spdlog::error(error_msg, cams.Size(), GLOBAL_CONST_NCAMS);
+        spdlog::error(error_msg, cams.Size(), flirmulticamera::GLOBAL_CONST_NCAMS);
         throw std::runtime_error(error_msg);
         return false;
     }
 
-    std::array<std::string, GLOBAL_CONST_NCAMS> system_sns;
-    for (uint16_t cidx = 0; cidx < GLOBAL_CONST_NCAMS; cidx++)
+    std::array<std::string, flirmulticamera::GLOBAL_CONST_NCAMS> system_sns;
+    for (uint16_t cidx = 0; cidx < flirmulticamera::GLOBAL_CONST_NCAMS; cidx++)
     {
-        system_sns.at(cidx) = std::string(GLOBAL_CONST_CAMERA_SERIAL_NUMBERS.at(cidx));
+        system_sns.at(cidx) = std::string(flirmulticamera::GLOBAL_CONST_CAMERA_SERIAL_NUMBERS.at(cidx));
     }
 
 
-    for (uint16_t cidx = 0; cidx < GLOBAL_CONST_NCAMS; cidx++)
+    for (uint16_t cidx = 0; cidx < flirmulticamera::GLOBAL_CONST_NCAMS; cidx++)
     {
         auto cam = cams[cidx].GetObject();
         SNs.at(cidx) = cam["SerialNumber"].GetString();
 
         // check serial number exists
-        for (uint16_t i = 0; i < GLOBAL_CONST_NCAMS; i++)
+        for (uint16_t i = 0; i < flirmulticamera::GLOBAL_CONST_NCAMS; i++)
         {
             if (SNs.at(cidx) == system_sns.at(i))
             {
                 break;
             }
-            if (i == GLOBAL_CONST_NCAMS - 1)
+            if (i == flirmulticamera::GLOBAL_CONST_NCAMS - 1)
             {
                 std::string error_msg = "Serial number {} not found in system serial numbers";
                 spdlog::error(error_msg, SNs.at(cidx));
@@ -175,7 +175,7 @@ bool LoadCameras(
             Extrinsic
         );
     }
-    for(uint8_t i = 0; i < static_cast<uint8_t>(GLOBAL_CONST_NCAMS); i++)
+    for(uint8_t i = 0; i < static_cast<uint8_t>(flirmulticamera::GLOBAL_CONST_NCAMS); i++)
     {
         if (SNs.at(i) == std::string(GLOBAL_CONST_TOP_CAM_SERIAL))
         {

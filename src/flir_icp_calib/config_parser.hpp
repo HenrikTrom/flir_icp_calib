@@ -1,6 +1,6 @@
 #pragma once
 #include "cpp_utils/jsontools.h"
-#include "hardware_constants.h"
+#include "config.h"
 
 namespace flir_icp_calib {
 
