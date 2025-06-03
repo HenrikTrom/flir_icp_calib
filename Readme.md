@@ -4,6 +4,8 @@
 
 Developed as part of my PhD research, this package is tailored for precise, repeatable calibration in vision-based robotic systems.
 
+This module is part of my  **ROS/ROS2** [real-time 3D tracker](https://github.com/HenrikTrom/real-time-3D-tracking) and its [docker-implementation](https://github.com/HenrikTrom/ROSTrack-RT-3D).
+
 ![rviz](content/rviz.png)
 
 📌 Overview
