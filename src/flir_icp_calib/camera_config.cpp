@@ -6,7 +6,9 @@ using namespace rapidjson;
 
 namespace flir_icp_calib{
 
-CameraParameters::CameraParameters(std::string SN, std::vector<float> Intrinsic, std::vector<float> Extrinsic)
+CameraParameters::CameraParameters(
+    std::string SN, std::vector<float> Intrinsic, std::vector<float> Extrinsic, bool mm
+)
 {
     this->SN = SN;
     if (Intrinsic.size() == 4)
@@ -37,6 +39,12 @@ CameraParameters::CameraParameters(std::string SN, std::vector<float> Intrinsic,
     this->Principle = VectorXf{2};
     this->Principle << this->cx, this->cy;
     this->M = Map<MatrixXf>(Extrinsic.data(), 4, 4).transpose();
+    if (mm)
+    {
+        this->M(0, 3) /= 1000.f;
+        this->M(1, 3) /= 1000.f;
+        this->M(2, 3) /= 1000.f;
+    }
     this->R = this->M.block<3, 3>(0, 0);
     this->t = this->M.col(3);
 
@@ -78,7 +86,8 @@ void MultiCameras::Init(void)
             }
             else
             {
-                this->F[i][j] << 1.0, 0.0, 1.0,
+                this->F[i][j] << 
+                    1.0, 0.0, 1.0,
                     0.0, 1.0, 0.0,
                     0.0, 0.0, 1.0;
             }
@@ -110,7 +119,7 @@ bool LoadCameras(
     Document& calib_doc,
     MultiCameras &CameraOut)
 {
-
+    spdlog::info("Calibration Timestamp: {}", calib_doc["timestamp"].GetString());
     // read camera params
     if (!calib_doc["CAMERAS"].IsArray()){
         return false;
@@ -148,13 +157,14 @@ bool LoadCameras(
                 auto Extrinsic_temp = cam["Extrinsic"].GetArray();
                 for (uint8_t i = 0; i < Extrinsic_temp.Size(); i++)
                 {
-                    Extrinsic.push_back(Extrinsic_temp[i].GetFloat());
+                    Extrinsic.push_back(Extrinsic_temp[i].GetFloat()); 
                 }
                 
                 CameraOut.Cam.at(cidx) = CameraParameters(
                     SNs.at(cidx), 
                     Intrinsic, 
-                    Extrinsic
+                    Extrinsic,
+                    true // mm to m
                 );
                 spdlog::info("Loaded Calibration of {}", SNs.at(cidx));
                 break;
@@ -181,6 +191,7 @@ bool LoadCameras(
 }
 
 bool load_calibration(const std::string& calib_file, MultiCameras &CameraOut){
+    spdlog::info("Loading Calibration File {}", calib_file);
     rapidjson::Document calib_doc;
     if (!cpp_utils::load_json_with_schema(
         calib_file, 

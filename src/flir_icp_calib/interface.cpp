@@ -128,9 +128,9 @@ bool TransformInterfaceAruco::start()
             throw std::runtime_error(msg);
         };
         // save images
-        for (std::size_t img_id = 0; img_id<frame.size(); img_id++){
-            cv::imwrite(savepath+"/"+std::to_string(img_id)+".jpg", frame.at(img_id));
-        }
+        // for (std::size_t img_id = 0; img_id<frame.size(); img_id++){
+        //     cv::imwrite(savepath+"/"+std::to_string(img_id)+".jpg", frame.at(img_id));
+        // }
         // save detected markers
         for (int img_id = 0; img_id<frame.size(); img_id++){
             cv::Mat img_cp = frame.at(img_id).clone();
@@ -181,6 +181,7 @@ bool TransformInterfaceAruco::start()
     triangulate_multi_cams(
         this->cameras, this->cfg.max_reprojection_error_images, 
         detected_points, CamIDs, this->triangulated_points);
+
 
     iterative_closest_points(local_points_intersection, this->triangulated_points, this->transform);
     std::cout<<transform.matrix()<<std::endl;

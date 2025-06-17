@@ -20,7 +20,7 @@ namespace flir_icp_calib{
 class CameraParameters
 {
 public:
-    CameraParameters(std::string SN, std::vector<float> Intrinsic, std::vector<float> Extrinsic);
+    CameraParameters(std::string SN, std::vector<float> Intrinsic, std::vector<float> Extrinsic, bool mm);
     CameraParameters(){};
     ~CameraParameters();
     // intrinsic coefficients

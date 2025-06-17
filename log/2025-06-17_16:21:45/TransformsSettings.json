@@ -1,0 +1,17 @@
+{
+    "online": true,
+    "log": true,
+    "load_path_offline": "/home/docker/catkin_ws/src/fri_transforms/test/data",
+    "camera_settings_file": "/home/docker/workspace/workspace/src/flir_icp_calib/cfg/1024x768.json",
+    "aruco_dictionary": 20,
+    "h": 10,
+    "w": 8,
+    "min_markers": 10,
+    "calibration_file": "/home/docker/workspace/workspace/src/flir_icp_calib/cfg/Calibration1024x768.json",
+    "min_cameras_per_point": 3,
+    "local_pattern_file": "/home/docker/workspace/workspace/src/flir_icp_calib/data/local_calibration.json",
+    "max_reprojection_error_images": 2,
+    "max_reprojection_error_robot": 5,
+    "parent_frame_id": "cam0",
+    "child_frame_id": "fr3_link0"
+}
