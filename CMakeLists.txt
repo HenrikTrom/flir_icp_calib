@@ -5,15 +5,16 @@ set(CMAKE_CXX_STANDARD 17)
 
 option(DEBUG_TIME_LOGGING "Enable cout for logging runtime" ON)
 
-# set(CMAKE_BUILD_TYPE Release)
-set(CMAKE_BUILD_TYPE Debug)
+set(CMAKE_BUILD_TYPE Release)
+# set(CMAKE_BUILD_TYPE Debug)
 if(CMAKE_BUILD_TYPE STREQUAL "Debug")
   set(DEBUG_TIME_LOGGING ON CACHE BOOL "Enable cout for logging runtime" FORCE)
 else()
   set(OPTIMIZATION_FLAGS $ENV{CPP_OPTIMIZATIONS})
   set(
     CMAKE_CXX_FLAGS 
-    "${CMAKE_CXX_FLAGS} ${OPTIMIZATION_FLAGS} -flto"
+    # "${CMAKE_CXX_FLAGS} ${OPTIMIZATION_FLAGS} -flto"
+    "${CMAKE_CXX_FLAGS} -DNDEBUG -O3 -Wno-deprecated-declarations"
   )
 endif()
 
