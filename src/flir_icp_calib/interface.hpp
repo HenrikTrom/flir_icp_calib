@@ -58,9 +58,9 @@ private:
 
     std_srvs::Trigger req;
 
-    keiko_msgs::ArucoMarkers3d det_arucomarkers3d;
-    visualization_msgs::MarkerArray det_rviz;
-    ros::Publisher pub_det_aruco, pub_det_rviz;
+    keiko_msgs::ArucoMarkers3d det_arucomarkers3d, local_arucomarkers3d;
+    visualization_msgs::MarkerArray det_arucos_rviz, local_arucos_rviz;
+    ros::Publisher pub_det_aruco, pub_det_rviz, pub_local_aruco, pub_local_rviz;
 };
 
 }

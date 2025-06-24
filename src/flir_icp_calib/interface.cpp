@@ -14,8 +14,12 @@ TransformInterfaceAruco::TransformInterfaceAruco(ros::NodeHandle &nh, const std:
     };
     this->pub_det_aruco=this->nh.advertise<keiko_msgs::ArucoMarkers3d>(
         std::string("aruco_corrdinates_")+this->cfg.parent_frame_id, 2);
+    this->pub_local_aruco=this->nh.advertise<keiko_msgs::ArucoMarkers3d>(
+        std::string("aruco_corrdinates_")+this->cfg.child_frame_id, 2);
     this->pub_det_rviz=this->nh.advertise<visualization_msgs::MarkerArray>(
         "det_aruco_markers", 2);
+    this->pub_local_rviz=this->nh.advertise<visualization_msgs::MarkerArray>(
+        "local_aruco_markers", 2);
 
 };
 bool TransformInterfaceAruco::get_images(
@@ -219,10 +223,17 @@ bool TransformInterfaceAruco::start()
     gen_aruco_msgs(
         triangulated_points, ids_intersection,
         this->cfg.parent_frame_id, color,
-        this->det_arucomarkers3d, this->det_rviz
+        this->det_arucomarkers3d, this->det_arucos_rviz
     );
 
-     this->ThreadHandle.reset(new std::thread(&TransformInterfaceAruco::ThreadFunction, this));
+    color.g=0;
+    gen_aruco_msgs(
+        local_points, ids_pattern,
+        this->cfg.child_frame_id, color,
+        this->local_arucomarkers3d, this->local_arucos_rviz
+    );
+
+    this->ThreadHandle.reset(new std::thread(&TransformInterfaceAruco::ThreadFunction, this));
 
     return true;
 };
@@ -232,10 +243,12 @@ void TransformInterfaceAruco::ThreadFunction()
     uint16_t count = 0;
     while (!this->ShouldClose && ros::ok()){
         count ++;
-        if (count == 100){
+        if (count == 10){
             this->pub_det_aruco.publish(this->det_arucomarkers3d);
-            this->pub_det_rviz.publish(this->det_rviz);
-            count == 0;
+            this->pub_det_rviz.publish(this->det_arucos_rviz);
+            this->pub_local_aruco.publish(this->local_arucomarkers3d);
+            this->pub_local_rviz.publish(this->local_arucos_rviz);
+            count = 0;
         }
         std::this_thread::sleep_for(std::chrono::milliseconds(10));
     }
