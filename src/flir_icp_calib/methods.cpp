@@ -150,7 +150,7 @@ bool triangulate_multi_cams(
             msg += ">= treshold! ({})";
             spdlog::error(
                 msg, 
-                std::string(flirmulticamera::GLOBAL_CONST_CAMERA_SERIAL_NUMBERS.at(i)), 
+                cameras.Cam.at(i).SN,
                 cerrors.at(i),
                 max_reprojection_error
             );
@@ -159,7 +159,7 @@ bool triangulate_multi_cams(
         else{
             spdlog::info(
                 msg, 
-                std::string(flirmulticamera::GLOBAL_CONST_CAMERA_SERIAL_NUMBERS.at(i)), 
+                cameras.Cam.at(i).SN,
                 cerrors.at(i)
             );
         }
@@ -326,21 +326,16 @@ bool validate_reprojection_after_icp(
 
     spdlog::info("Reprojection Errors of Back-projected pattern:");
 
-    std::array<std::string, flirmulticamera::GLOBAL_CONST_NCAMS> sns;
-    for (std::size_t i = 0; i<flirmulticamera::GLOBAL_CONST_NCAMS; i++){
-        sns.at(i) = std::string(flirmulticamera::GLOBAL_CONST_CAMERA_SERIAL_NUMBERS.at(i));
-    }
-
     std::vector<float> errors2 = mean_reprojection_errors(cameras, points_projected, detected_points, CamIDs);
     for (int i = 0; i<frame.size(); i++){
-        spdlog::info("{}\t{}", sns.at(i), errors2.at(i));
+        spdlog::info("{}\t{}", cameras.Cam.at(i).SN, errors2.at(i));
     }
     bool success = true;
     for (int i = 0; i<frame.size(); i++){
         if (errors2.at(i) > max_reprojection_error_robot){
             spdlog::error(
                 "Reprojection of local 3D to {}: {} exceeds threshold: {}",
-                sns.at(i),
+                cameras.Cam.at(i).SN,
                 errors2.at(i),
                 max_reprojection_error_robot
             );

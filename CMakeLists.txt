@@ -29,14 +29,10 @@ else()
 endif()
 
 set(CONFIG_DIR ${CMAKE_CURRENT_SOURCE_DIR}/cfg)
-set(FLIR_TOP_CAM_SERIAL $ENV{FLIR_TOP_CAM_SERIAL})
 configure_file(
   ${CMAKE_CURRENT_SOURCE_DIR}/cmake/config.h.in
   ${CMAKE_CURRENT_SOURCE_DIR}/src/${PROJECT_NAME}/config.h
 )
-##################################################################################
-# END: const header cam serial numbers
-##################################################################################
 
 
 link_directories(/usr/local/lib)

@@ -5,6 +5,6 @@
 namespace flir_icp_calib{
 
 constexpr std::string_view CONFIG_DIR = "/home/docker/workspace/workspace/src/flir_icp_calib/cfg";
-constexpr std::string_view GLOBAL_CONST_TOP_CAM_SERIAL = "19037266";
+constexpr std::string_view GLOBAL_CONST_main_cam_serial = "";
 
 } // namespace detection_inference

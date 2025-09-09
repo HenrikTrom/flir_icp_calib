@@ -6,7 +6,7 @@
 #include <iostream>
 #include "config.h"
 #include "cpp_utils/jsontools.h"
-#include "flirmulticamera/hardware_constants.h"
+#include "flirmulticamera/config.h"
 #include <cstdio>
 #include <unistd.h>
 #include <spdlog/spdlog.h>

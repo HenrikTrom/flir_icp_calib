@@ -25,12 +25,34 @@ TransformInterfaceAruco::TransformInterfaceAruco(ros::NodeHandle &nh, const std:
 bool TransformInterfaceAruco::get_images(
     std::array<cv::Mat, flirmulticamera::GLOBAL_CONST_NCAMS> &frame
 ){
-    flirmulticamera::CameraSettings settings;
     spdlog::info("Loading camera settings from: {}", this->cfg.camera_settings_file);
-    load_camera_settings(this->cfg.camera_settings_file, settings);
+    load_camera_settings(this->cfg.camera_settings_file, this->cam_settings);
+    if (this->cam_settings.SNs.size() != this->cameras.Cam.size()) {
+        std::string msg = "Number of cameras in settings file ({}) does not match number in calib file ({})";
+        spdlog::error(msg, this->cam_settings.SNs.size(), this->cameras.Cam.size());
+        throw std::runtime_error(msg);
+        return false;
+    }
+    // check if cam_settings.serial_numbers match loaded calibration
+    for (const auto &sn_settings : this->cam_settings.SNs){ 
+        bool found = false;
+        for (const auto &cam : this->cameras.Cam){
+            if (cam.SN == sn_settings) {
+                found = true;
+            }
+        }
+        if (!found){
+            std::string msg = "Camera ({}) not found in calibration file {}";
+            spdlog::error(msg, sn_settings, this->cfg.camera_settings_file);
+            throw std::runtime_error(msg);
+            return false;
+        }
+    }
     flirmulticamera::FlirCameraHandler fcamhandler(
-        settings
+        this->cam_settings
     );
+
+
     if (!fcamhandler.Configure())
     {
         spdlog::error("Could not configure FlirCameraHandler...");

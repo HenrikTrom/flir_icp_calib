@@ -46,6 +46,7 @@ private:
     double pub_delay = 0.0001;
     config_transform cfg;
     MultiCameras cameras;
+    flirmulticamera::CameraSettings cam_settings;
     std::vector<Eigen::VectorXf> triangulated_points;
     std::vector<int> all_ids;
     std::string child_frame_id, parent_frame_id;

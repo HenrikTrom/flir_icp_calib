@@ -6,6 +6,8 @@ using namespace rapidjson;
 
 namespace flir_icp_calib{
 
+// Begin:  CameraParameters
+
 CameraParameters::CameraParameters(
     std::string SN, std::vector<float> Intrinsic, std::vector<float> Extrinsic, bool mm
 )
@@ -52,9 +54,9 @@ CameraParameters::CameraParameters(
     this->P = this->K * this->M.block<3, 4>(0, 0);
 };
 
-CameraParameters::~CameraParameters()
-{
-}
+CameraParameters::~CameraParameters(){}
+
+// End:  CameraParameters
 
 MultiCameras::MultiCameras()
 {
@@ -117,69 +119,52 @@ Matrix3f MultiCameras::ComputeF(MatrixXf K1, MatrixXf K2, MatrixXf M1, MatrixXf 
 
 bool LoadCameras(
     Document& calib_doc,
-    MultiCameras &CameraOut)
-{
+    MultiCameras &CameraOut
+) {
     spdlog::info("Calibration Timestamp: {}", calib_doc["timestamp"].GetString());
     // read camera params
     if (!calib_doc["CAMERAS"].IsArray()){
         return false;
     }
     auto cams = calib_doc["CAMERAS"].GetArray();
-    std::array<std::string, flirmulticamera::GLOBAL_CONST_NCAMS> SNs;
 
-    if (cams.Size() != flirmulticamera::GLOBAL_CONST_NCAMS)
-    {
+    if (cams.Size() != flirmulticamera::GLOBAL_CONST_NCAMS) {
         std::string error_msg = "Number of cameras in calibration file ({}) != expected number of cameras ({})";
         spdlog::error(error_msg, cams.Size(), flirmulticamera::GLOBAL_CONST_NCAMS);
         throw std::runtime_error(error_msg);
         return false;
     }
+    std::array<std::string, flirmulticamera::GLOBAL_CONST_NCAMS> SNs;
 
-    for (uint16_t cidx = 0; cidx < flirmulticamera::GLOBAL_CONST_NCAMS; cidx++)
-    {
-        SNs.at(cidx) = std::string(flirmulticamera::GLOBAL_CONST_CAMERA_SERIAL_NUMBERS.at(cidx));
-        bool found = false; 
-        for (uint16_t cdocidx = 0; cdocidx < flirmulticamera::GLOBAL_CONST_NCAMS; cdocidx++)
-        {
-            auto cam = cams[cdocidx].GetObject();
-            if (SNs.at(cidx) == cam["SerialNumber"].GetString())
-            {
-                found = true;
-                std::vector<float> Intrinsic;
-                std::vector<float> Extrinsic;
-                
-                auto Intrinsic_temp = cam["Intrinsic"].GetArray();
-                for (uint8_t i = 0; i < Intrinsic_temp.Size(); i++)
-                {
-                    Intrinsic.push_back(Intrinsic_temp[i].GetFloat());
-                }
-                
-                auto Extrinsic_temp = cam["Extrinsic"].GetArray();
-                for (uint8_t i = 0; i < Extrinsic_temp.Size(); i++)
-                {
-                    Extrinsic.push_back(Extrinsic_temp[i].GetFloat()); 
-                }
-                
-                CameraOut.Cam.at(cidx) = CameraParameters(
-                    SNs.at(cidx), 
-                    Intrinsic, 
-                    Extrinsic,
-                    true // mm to m
-                );
-                spdlog::info("Loaded Calibration of {}", SNs.at(cidx));
-                break;
-            }
+    for (uint16_t cidx = 0; cidx < flirmulticamera::GLOBAL_CONST_NCAMS; cidx++) {
+        auto cam = cams[cidx].GetObject();
+
+        SNs.at(cidx) = cam["SerialNumber"].GetString();
+
+        std::vector<float> Intrinsic;
+        std::vector<float> Extrinsic;
+        
+        auto Intrinsic_temp = cam["Intrinsic"].GetArray();
+        for (uint8_t i = 0; i < Intrinsic_temp.Size(); i++) {
+            Intrinsic.push_back(Intrinsic_temp[i].GetFloat());
         }
-        if (!found){
-            spdlog::error("Serial number {} not found in Calibration", SNs.at(cidx));
+        
+        auto Extrinsic_temp = cam["Extrinsic"].GetArray();
+        for (uint8_t i = 0; i < Extrinsic_temp.Size(); i++) {
+            Extrinsic.push_back(Extrinsic_temp[i].GetFloat()); 
         }
+        
+        CameraOut.Cam.at(cidx) = CameraParameters(
+            SNs.at(cidx), 
+            Intrinsic, 
+            Extrinsic,
+            true // mm to m
+        );
+        spdlog::info("Loaded Calibration of {}", SNs.at(cidx));
     }
 
-
-    for(uint8_t i = 0; i < static_cast<uint8_t>(flirmulticamera::GLOBAL_CONST_NCAMS); i++)
-    {
-        if (SNs.at(i) == std::string(GLOBAL_CONST_TOP_CAM_SERIAL))
-        {
+    for(uint8_t i = 0; i < static_cast<uint8_t>(flirmulticamera::GLOBAL_CONST_NCAMS); i++) {
+        if (SNs.at(i) == calib_doc["main_cam_serial"].GetString()) {
             CameraOut.TopCamID = i;
             break;
         }
@@ -190,7 +175,10 @@ bool LoadCameras(
     return true;
 }
 
-bool load_calibration(const std::string& calib_file, MultiCameras &CameraOut){
+bool load_calibration(
+    const std::string& calib_file,
+    MultiCameras &CameraOut
+) {
     spdlog::info("Loading Calibration File {}", calib_file);
     rapidjson::Document calib_doc;
     if (!cpp_utils::load_json_with_schema(

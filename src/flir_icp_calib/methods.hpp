@@ -71,6 +71,7 @@ std::vector<Eigen::VectorXf> Calc3DCentres(
  * Triangulates N points detcted by multiple cameras and checks the reprojection error
  *
  * @param [in] cameras N Camera objects containing the projection matrices 
+ * @param [in] detected_markers Serial numbers of cameras
  * @param [in] max_reprojection_error Maximum mean reprojection error of 3D point to image 
  * @param [in] detected_markers Set of dected points, Npoints x Ndetectedcams x 2
  * @param [out] CamIDs ids of cameras points were detected with shape Npoints x Ndetectedcams
@@ -80,7 +81,7 @@ std::vector<Eigen::VectorXf> Calc3DCentres(
 bool triangulate_multi_cams(
     MultiCameras& cameras, float max_reprojection_error, 
     std::vector<std::array<cv::Point2f, flirmulticamera::GLOBAL_CONST_NCAMS>>& detected_markers, 
-    std::vector<std::array<uint8_t, flirmulticamera::GLOBAL_CONST_NCAMS>>& CamIDs, 
+    std::vector<std::array<uint8_t, flirmulticamera::GLOBAL_CONST_NCAMS>>& CamIDs,
     std::vector<Eigen::VectorXf>& points_3d
 );
 
